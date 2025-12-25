@@ -11,7 +11,6 @@ public class Timetable {
     }
 
     public void addNewTrainingSession(TrainingSession trainingSession) {
-        //сохраняем занятие в расписании
         DayOfWeek day = trainingSession.getDayOfWeek();
         TimeOfDay time = trainingSession.getTimeOfDay();
         Map<TimeOfDay, Set<TrainingSession>> dayTable = timetable.computeIfAbsent(day, k -> new TreeMap<>());
@@ -20,7 +19,6 @@ public class Timetable {
     }
 
     public List<TrainingSession> getTrainingSessionsForDay(DayOfWeek dayOfWeek) {
-        //как реализовать, тоже непонятно, но сложность должна быть О(1)
         Map<TimeOfDay, Set<TrainingSession>> dayTable = timetable.get(dayOfWeek);
         if (dayTable == null) {
             return Collections.emptyList();
@@ -35,7 +33,6 @@ public class Timetable {
     }
 
     public Set<TrainingSession> getTrainingSessionsForDayAndTime(DayOfWeek dayOfWeek, TimeOfDay timeOfDay) {
-        //как реализовать, тоже непонятно, но сложность должна быть О(1)
         Map<TimeOfDay, Set<TrainingSession>> dayTable = timetable.get(dayOfWeek);
 
         if (dayTable == null || !dayTable.containsKey(timeOfDay)) {
@@ -48,9 +45,9 @@ public class Timetable {
     public Map<Coach, Integer> getCountByCoaches() {
         Map<Coach, Integer> count = new HashMap<>();
 
-        for (DayOfWeek day : timetable.keySet()) {
-            for (TimeOfDay time : timetable.get(day).keySet()) {
-                for (TrainingSession training : timetable.get(day).get(time)) {
+        for (Map<TimeOfDay, Set<TrainingSession>> trainingsForDay : timetable.values()) {
+            for (Set<TrainingSession> trainingsForTime : trainingsForDay.values()) {
+                for (TrainingSession training : trainingsForTime) {
                     count.merge(training.getCoach(), 1, Integer::sum);
                 }
             }
